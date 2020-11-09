@@ -1,25 +1,32 @@
 import React from "react";
-import PropTypes from "prop-types";
-import {View, Text, Button} from "react-native";
+import Loader from "../../components/loader";
+import Layout from "../../components/layout";
+import List from "../../components/list";
+import {usePopularMovies} from "../../hooks";
+import NavigationService from "../../navigation/service";
 
-const Home = ({navigation}) => {
+const Home = () => {
+  const [movies, fetchMoreMovies, loading] = usePopularMovies();
+
+  const handleSearchInputFocus = () => {
+    NavigationService.navigate("SearchScreen");
+  };
+
+  const handleEndReached = () => {
+    fetchMoreMovies();
+  };
+
   return (
-    <View>
-      <Text>HOME SCREEN</Text>
-      <Button
-        title="GO TO DETAILS"
-        onPress={() => navigation.navigate("SearchScreen")}
+    <Layout flatListContainer>
+      {loading && <Loader />}
+      <List
+        data={movies}
+        title="What's popular"
+        onEndReached={handleEndReached}
+        onSearchInputFocus={handleSearchInputFocus}
       />
-      <Button
-        title="GO TO SEARCH"
-        onPress={() => navigation.navigate("DetailScreen")}
-      />
-    </View>
+    </Layout>
   );
-};
-
-Home.propTypes = {
-  navigation: PropTypes.object
 };
 
 export default Home;
